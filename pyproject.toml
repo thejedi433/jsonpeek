@@ -11,3 +11,18 @@ jsonpeek = "jsonpeek:main"
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["test_jsonpeek.py"]
+
+[tool.coverage.run]
+source = ["jsonpeek"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+]
+fail_under = 100

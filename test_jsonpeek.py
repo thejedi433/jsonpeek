@@ -303,3 +303,30 @@ def test_main_as_module():
     )
     assert result.returncode == 0
     assert "Inspect JSON structure" in result.stdout
+
+
+def test_main_module_runpy(monkeypatch):
+    """Cover __main__.py by running it in-process with runpy."""
+    import runpy
+    old_argv = sys.argv
+    sys.argv = ["jsonpeek", "--help"]
+    try:
+        with pytest.raises(SystemExit) as exc:
+            runpy.run_module("jsonpeek.__main__", run_name="__main__")
+        assert exc.value.code == 0
+    finally:
+        sys.argv = old_argv
+
+
+def test_resolve_path_bare_index_no_key():
+    """resolve_path on '[0]' — empty key before bracket."""
+    data = [10, 20]
+    assert resolve_path(data, "[0]") == 10
+
+
+def test_show_keys_empty_list(capsys):
+    """show_keys on an empty list skips the 'First item' branch."""
+    show_keys([], "")
+    captured = capsys.readouterr()
+    assert "list with 0 items" in captured.out
+    assert "First item" not in captured.out
